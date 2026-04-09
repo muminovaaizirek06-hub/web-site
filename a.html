@@ -1,0 +1,188 @@
+
+        .btn-register { background: var(--edu-red); color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
+     .search-container { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: -40px; display: flex; gap: 15px; position: relative; z-index: 10; border: 1px solid var(--border); }
+        .search-box { flex: 2; position: relative; }
+        .search-box input { width: 100%; padding: 12px 40px; border-radius: 8px; border: 1px solid var(--border); background: var(--light); color: var(--text-main); }
+        .course-img { height: 180px; background-size: cover; background-position: center; }
+        .course-info { padding: 20px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: var(--white); padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+        #dashboardWrapper { display: none; padding-top: 100px; min-height: 100vh; background: var(--light); }
+        .db-grid { display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 20px 0; }
+        .db-sidebar { background: var(--white); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        .db-content { background: var(--white); padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo" onclick="showSection('main')" style="cursor:pointer">
+                <h1 style="color:var(--edu-red)">EDU-<span style="color:var(--text-main)">ONLINE</span></h1>
+            </div>
+            <div class="nav-right">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </div>
+                <div id="regArea">
+                    <button class="btn-register" onclick="toggleModal()">Кирүү</button>
+                </div>
+                <div id="userProfile" style="display:none; cursor:pointer" onclick="showSection('dashboard')">
+                    <i class="fas fa-user-circle fa-2x"></i>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="mainSection">
+        <section class="hero">
+            <div class="container">
+                <h1>Келечекти биз менен бирге куруңуз</h1>
+                <p>Эң актуалдуу 20дан ашык онлайн курстар</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search" style="position:absolute; left:15px; top:15px; color:var(--gray)"></i>
+                    <input type="text" id="courseSearch" placeholder="Курсту издөө...">
+                </div>
+                <select id="catFilter" style="padding:10px; border-radius:8px; background:var(--light); color:var(--text-main); border:1px solid var(--border)">
+                    <option value="">Бардык багыттар</option>
+                    <option value="it">IT / Программалоо</option>
+                    <option value="lang">Тилдер</option>
+                </select>
+            </div>
+
+            <div class="courses-grid" id="courseGrid"></div>
+        </div>
+    </div>
+
+    <div id="dashboardWrapper">
+        <div class="container">
+            <div class="db-grid">
+                <aside class="db-sidebar">
+                    <div style="text-align:center">
+                        <div id="userInitial" style="width:60px; height:60px; background:var(--edu-red); border-radius:50%; margin: 0 auto 10px; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; font-weight:800">U</div>
+                        <h3 id="dashName">Колдонуучу</h3>
+                    </div>
+                    <hr style="margin:20px 0; opacity:0.1">
+                    <p style="cursor:pointer; margin-bottom:10px" onclick="showSection('main')"><i class="fas fa-home"></i> Башкы бет</p>
+                    <p style="cursor:pointer; color:var(--edu-red)" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Чыгуу</p>
+                </aside>
+                <main class="db-content">
+                    <h2>Менин курстарым</h2>
+                    <div id="myCoursesList" style="margin-top:20px">
+                        <p style="color:var(--gray)">Сиз азырынча курстарга жазыла элексиз.</p>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="regModal">
+        <div class="modal-content">
+            <h3>Катталуу</h3>
+            <input type="text" id="uName" placeholder="Атыңызды жазыңыз" style="width:100%; padding:12px; margin:20px 0; border-radius:8px; border:1px solid var(--border)">
+            <button class="btn-register" style="width:100%" onclick="registerUser()">Катталуу</button>
+            <p style="margin-top:15px; cursor:pointer; font-size:12px" onclick="toggleModal()">Жабуу</p>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let myCourses = [];
+
+        const courses = [
+            { id: 1, title: "Web Өнүктүрүү", cat: "it", img: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400" },
+            { id: 2, title: "Python Негиздери", cat: "it", img: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400" },
+            { id: 3, title: "Англис тили (A1)", cat: "lang", img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400" }
+        ];
+
+        // 20 курс кылып толтуруу
+        for(let i=4; i<=20; i++) {
+            courses.push({ id: i, title: `Кесиптик курс №${i}`, cat: "it", img: `https://picsum.photos/seed/${i}/400/250` });
+        }
+
+        function render(data) {
+            const grid = document.getElementById('courseGrid');
+            grid.innerHTML = data.map(c => `
+                <div class="course-card">
+                    <div class="course-img" style="background-image: url('${c.img}')"></div>
+                    <div class="course-info">
+                        <h4>${c.title}</h4>
+                        <button onclick="selectCourse(${c.id})" style="width:100%; margin-top:15px; padding:8px; border:none; background:#22c55e; color:white; border-radius:5px; cursor:pointer">Тандоо</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        render(courses);
+
+        // ТҮН/КҮН РЕЖИМИ
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            if(document.documentElement.hasAttribute('data-theme')) {
+                document.documentElement.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        function toggleModal() {
+            const m = document.getElementById('regModal');
+            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function registerUser() {
+            const name = document.getElementById('uName').value;
+            if(name) {
+                currentUser = name;
+                document.getElementById('regArea').style.display = 'none';
+                document.getElementById('userProfile').style.display = 'block';
+                document.getElementById('dashName').innerText = name;
+                document.getElementById('userInitial').innerText = name[0].toUpperCase();
+                toggleModal();
+                showSection('dashboard');
+            }
+        }
+
+        function selectCourse(id) {
+            if(!currentUser) { toggleModal(); return; }
+            const course = courses.find(c => c.id === id);
+            if(!myCourses.includes(course)) {
+                myCourses.push(course);
+                updateDashboard();
+                alert("Курс кошулду!");
+            }
+        }
+
+        function updateDashboard() {
+            const list = document.getElementById('myCoursesList');
+            list.innerHTML = myCourses.map(c => `
+                <div style="padding:10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between">
+                    <span>${c.title}</span>
+                    <span style="color:#22c55e">Жигердүү</span>
+                </div>
+            `).join('');
+        }
+
+        function showSection(sect) {
+            document.getElementById('mainSection').style.display = sect === 'main' ? 'block' : 'none';
+            document.getElementById('dashboardWrapper').style.display = sect === 'dashboard' ? 'block' : 'none';
+            window.scrollTo(0,0);
+        }
+
+        // ИЗДӨӨ
+        document.getElementById('courseSearch').oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = courses.filter(c => c.title.toLowerCase().includes(val));
+            render(filtered);
+        };
+    </script>
+</body>
+</html>
