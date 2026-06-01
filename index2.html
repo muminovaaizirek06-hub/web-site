@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduPlatform - Онлайн Окуу Системасы</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <!-- ===== MAIN SITE CONTENT ===== -->
+    <div id="mainSite">
+        <!-- Header -->
+        <header>
+            <div class="container navbar">
+                <a href="#" class="logo" onclick="return false;">🎓 EduPlatform</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-toggle" id="mobileToggle" onclick="toggleMobileMenu()">☰</button>
+
+                <nav class="nav-links" id="navLinks">
+                    <div class="nav-menu-items">
+                        <a href="#home" onclick="closeMobileMenu()">🏠 Башкы бет</a>
+                        <a href="#courses" onclick="closeMobileMenu()">📚 Курстар</a>
+                        <a href="#reviews-section" onclick="closeMobileMenu()">💬 Пикир</a>
+                        <a href="#" onclick="openDashboard(); closeMobileMenu(); return false;" id="adminLink" style="display:none;">⚙️ Админ</a>
+                        <button class="theme-toggle" onclick="toggleTheme()" id="themeMobileBtn"> 🌙</button>
+                        
+                        
+                   
+                    </div>
+
+                    <div class="nav-auth">
+                        <button class="btn btn-outline btn-sm" id="loginBtn" onclick="openModal('authModal'); return false;">🔑 Кирүү</button>
+                        <button class="btn btn-primary btn-sm" id="registerBtn" onclick="openModal('authModal'); selectRole('student'); return false;">📝 Катталуу</button>
+                        <span id="userBadge" style="display:none; cursor:pointer; font-weight:600; color:var(--primary);" onclick="openDashboard()"></span>
+                        <button class="btn btn-danger btn-sm" id="logoutBtn" style="display:none;" onclick="handleLogout()">🚪 Чыгуу</button>
+
+                    </div>
+                </nav>
+            </div>
+        </header>
+        
+
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Келечегиңизди бүгүн баштаңыз 🚀</h1>
+                <p>Заманбап онлайн окуу платформасы. Мугалимдер жана студенттер үчүн ыңгайлуу, тез жана натыйжалуу.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'}); return false;">📚 Курстарды карап чыгуу</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section id="courses">
+            <div class="container">
+                <div class="section-title">
+                    <h2>📖 Бардык курстар</h2>
+                    <p>Өзүңүзгө ылайыктуу багытты тандап, окууну баштаңыз</p>
+                </div>
+
+                <div class="category-filters" id="categoryFilters"></div>
+
+                <!-- Search -->
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Курс издөө...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="courses-grid" id="coursesGrid"></div>
+
+                <div id="pagination"></div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section id="reviews-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>💬 Студенттердин пикири</h2>
+                    <p>Биздин платформа жөнүндө эмне ойлойсуз?</p>
+                </div>
+
+                <!-- Review Form -->
+                <div class="review-form-container">
+                    <h3 style="text-align:center; margin-bottom:20px;">✍️ Пикир калтыруу</h3>
+                    <form id="newReviewForm">
+                        <div class="form-row">
+                            <div class="form-group" style="flex:1;">
+                                <label>Сиздин атыңыз</label>
+                                <input type="text" id="rName" required placeholder="Атыңыз">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label>Ролуңуз</label>
+                                <select id="rRole">
+                                    <option value="Студент">Студент</option>
+                                    <option value="Мугалим">Мугалим</option>
+                                    <option value="Конок">Конок</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Баалоо</label>
+                            <div class="star-rating-input" id="starInput">
+                                <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                            </div>
+                            <input type="hidden" id="rRating" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Пикириңиз</label>
+                            <textarea id="rText" rows="3" required placeholder="Оюңузду жазыңыз..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width:100%;">🚀 Пикирди жарыялоо</button>
+                    </form>
+                </div>
+
+                <!-- Live Reviews Slider -->
+                <div class="slider-wrapper">
+                    <div class="slider-track" id="liveReviewTrack"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h4>🎓 EduPlatform</h4>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-top:10px;">Сапаттуу билимге жеткиликтүү жол. 24/7 колдоо, сертифицикацияланган мугалимдер.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Меню</h4>
+                        <ul>
+                            <li><a href="#home" onclick="return false;">Башкы бет</a></li>
+                            <li><a href="#courses" onclick="return false;">Курстар</a></li>
+                            <li><a href="#reviews-section" onclick="return false;">Пикир</a></li>
+                            <li><a href="#" onclick="openModal('authModal'); return false;">Катталуу</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Байланыш</h4>
+                        <ul>
+                            <li>📧 @eduplatform.kg</li>
+                            <li>📞 +996(221)05-01-06</li>
+                            <li>📍 Ош, Кыргызстан</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 EduPlatform. Бардык укуктар корголгон.</p>
+                </div>
+            </div>
+        </footer>
+    </div> 
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="fullDashboard" class="full-dash" style="display:none;">
+        <button class="dash-mobile-toggle" id="dashMobileToggle" onclick="toggleDashSidebar()">☰</button>
+        <div class="dash-overlay" id="dashOverlay" onclick="toggleDashSidebar()"></div>
+
+        <aside class="dash-sidebar" id="dashSidebar">
+            <div class="dash-logo">
+                <span>🎓 EduPlatform</span>
+                <button class="dash-close-mobile" onclick="toggleDashSidebar()">✕</button>
+            </div>
+            <nav class="dash-nav" id="dashNav"></nav>
+
+            <div class="dash-user-info">
+                <div class="dash-avatar" id="dashAvatar">A</div>
+                <div class="dash-user-details">
+                    <div id="dashUserName">Аты</div>
+                    <span id="dashRoleBadge">Рол</span>
+                </div>
+            </div>
+
+            <a href="#" class="exit-link" onclick="exitDashboard(); return false;">
+                <i class="fas fa-arrow-left"></i> Сайтка кайтуу
+            </a>
+        </aside>
+
+        <main class="dash-main">
+            <div class="dash-main-header">
+                <h2 id="dashGreeting">Салам!</h2>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="dashThemeToggle" onclick="toggleTheme()">🌙</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleLogout()">🚪 Чыгуу</button>
+                </div>
+            </div>
+
+            <div id="dashStats" class="dash-stats-grid"></div>
+            <div id="dashBodyArea" class="dash-body"></div>
+        </main>
+    </div>
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+            <h2 style="text-align:center;">Кош келдиңиз!</h2>
+
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="login" onclick="switchTab('login')">🔑 Кирүү</button>
+                <button class="tab-btn" data-tab="register" onclick="switchTab('register')">📝 Катталуу</button>
+            </div>
+
+            <div id="loginTab" class="tab-content active">
+                <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required placeholder="example@mail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Сырсөз</label>
+                        <input type="password" id="loginPass" required placeholder="******">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">🔓 Кирүү</button>
+                </form>
+            </div>
+
+            <div id="registerTab" class="tab-content">
+                <p style="text-align:center; margin-bottom:15px; color:var(--text-muted);">Ким катары катталасыз?</p>
+                <div class="role-cards">
+                    <div class="role-card" data-role="student" onclick="selectRole('student')">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>👨‍🎓 Студент</h3>
+                        <p>Курстарга катталып, билим алыңыз</p>
+                    </div>
+                    <div class="role-card" data-role="teacher" onclick="selectRole('teacher')">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <h3>👨‍🏫 Мугалим</h3>
+                        <p>Курс түзүп, окутуңуз</p>
+                    </div>
+                </div>
+
+                <form id="studentRegisterForm" style="display:none;" onsubmit="event.preventDefault(); registerStudent();">
+                    <div class="form-group"><label>Аты-жөнү *</label><input type="text" id="sName" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" id="sEmail" required></div>
+                    <div class="form-group"><label>Сырсөз *</label><input type="password" id="sPass" required><div class="password-strength"></div></div>
+                    <div class="form-group"><label>Телефон</label><input type="tel" id="sPhone"></div>
+                    <div class="form-group"><label>Туулган күнү</label><input type="date" id="sBirthdate"></div>
+                    <div class="form-group"><label>Билими</label>
+                        <select id="sEducation">
+                            <option value="">Тандаңыз</option>
+                            <option value="Мектеп">Мектеп</option>
+                            <option value="Колледж">Колледж</option>
+                            <option value="Бакалавр">Бакалавр</option>
+                            <option value="Магистратура">Магистратура</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">📝 Студент катары катталуу</button>
+                </form>
+
+                <form id="teacherRegisterForm" style="display:none;" onsubmit="event.preventDefault(); registerTeacher();">
+                    <div class="form-group"><label>Аты-жөнү *</label><input type="text" id="tName" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" id="tEmail" required></div>
+                    <div class="form-group"><label>Сырсөз *</label><input type="password" id="tPass" required><div class="password-strength"></div></div>
+                    <div class="form-group"><label>Адистиги *</label><input type="text" id="tSpecialty" required></div>
+                    <div class="form-group"><label>Иш тажрыйбасы (жыл) *</label><input type="number" id="tExp" min="0" required></div>
+                    <div class="form-group"><label>Билими</label>
+                        <select id="tEducation">
+                            <option value="">Тандаңыз</option>
+                            <option value="Бакалавр">Бакалавр</option>
+                            <option value="Магистратура">Магистратура</option>
+                            <option value="PhD">PhD</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Өзү жөнүндө кыскача</label><textarea id="tBio" rows="2"></textarea></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">📝 Мугалим катары катталуу</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Info Modal -->
+    <div id="courseModal" class="modal-overlay">
+        <div class="modal modal-large">
+            <button class="modal-close" onclick="closeModal('courseModal')">&times;</button>
+            <h2 id="cmTitle">Курс жөнүндө</h2>
+            <div id="cmDetails" class="course-details"></div>
+            <div style="margin-top:20px; text-align:right;">
+                <button class="btn btn-primary" onclick="enrollCourse()">📚 Курска жазылуу</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div id="addCourseModal" class="modal-overlay">
+        <div class="modal modal-large">
+            <button class="modal-close" onclick="closeModal('addCourseModal')">&times;</button>
+            <h2>➕ Жаңы курс кошуу</h2>
+            <form id="addCourseForm" onsubmit="event.preventDefault(); addNewCourse();">
+                <div class="form-group"><label>Курс аталышы *</label><input type="text" id="newCTitle" required></div>
+                <div class="form-group"><label>Категория *</label>
+                    <select id="newCCat" required>
+                        <option value="">Тандаңыз</option>
+                        <option>Программалоо</option>
+                        <option>Дизайн</option>
+                        <option>Тилдер</option>
+                        <option>Маркетинг</option>
+                        <option>Технология</option>
+                        <option>Бизнес</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Узактыгы *</label><input type="text" id="newCTime" placeholder="Мисалы: 8 жума" required></div>
+                <div class="form-group"><label>Сабактардын саны *</label><input type="number" id="newCLessons" min="1" value="10" required></div>
+                <div class="form-group"><label>Баасы (сом) *</label><input type="number" id="newCPrice" min="0" required></div>
+                <div class="form-group"><label>Сүрөттөмө *</label><textarea id="newCDesc" rows="3" required></textarea></div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">💾 Сактоо</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('editProfileModal')">&times;</button>
+            <h2>✏️ Профильди түзөтүү</h2>
+            <form id="editProfileForm" onsubmit="event.preventDefault(); saveProfile();">
+                <div id="editProfileFields"></div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:15px;">💾 Сактоо</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('paymentModal')">&times;</button>
+            <h2>💳 Төлөм жүргүзүү</h2>
+            <div style="text-align:center; padding:20px;">
+                <p>Сиз төмөнкү курс үчүн төлөм жасап жатасыз:</p>
+                <h3 id="paymentCourseName" style="color:var(--primary);"></h3>
+                <p style="font-size:1.5rem; font-weight:bold; margin:15px 0;" id="paymentAmount"></p>
+                <p style="color:var(--text-muted); font-size:0.9rem;">(Бул демо версия. Чыныгы төлөм системасы туташтырыла элек)</p>
+                <button id="confirmPayment" class="btn btn-success" style="width:100%; margin-top:20px;">✅ Төлөмдү ырастоо</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin: Edit Course Modal -->
+    <div id="adminEditCourseModal" class="modal-overlay">
+        <div class="modal modal-large">
+            <button class="modal-close" onclick="closeModal('adminEditCourseModal')">&times;</button>
+            <h2>✏️ Курсту өзгөртүү</h2>
+            <form id="adminEditCourseForm" onsubmit="event.preventDefault(); adminSaveEditCourse();">
+                <input type="hidden" id="editCourseId">
+                <div class="form-group"><label>Курс аталышы *</label><input type="text" id="editCourseTitle" required></div>
+                <div class="form-group"><label>Категория *</label>
+                    <select id="editCourseCat" required>
+                        <option>Программалоо</option><option>Дизайн</option><option>Тилдер</option>
+                        <option>Маркетинг</option><option>Технология</option><option>Бизнес</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Деңгээл</label>
+                    <select id="editCourseLevel">
+                        <option value="Баштапкы">Баштапкы</option>
+                        <option value="Орто">Орто</option>
+                        <option value="Өнүккөн">Өнүккөн</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Узактыгы *</label><input type="text" id="editCourseTime" placeholder="Мис: 8 жума" required></div>
+                <div class="form-group"><label>Сабактар саны *</label><input type="number" id="editCourseLessons" min="1" required></div>
+                <div class="form-group"><label>Баасы (сом) *</label><input type="number" id="editCoursePrice" min="0" required></div>
+                <div class="form-group"><label>Мугалим *</label><input type="text" id="editCourseTeacher" required></div>
+                <div class="form-group"><label>Сүрөттөмө *</label><textarea id="editCourseDesc" rows="3" required></textarea></div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Сактоо</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin: Edit Site Texts Modal -->
+    <div id="adminEditTextModal" class="modal-overlay">
+        <div class="modal modal-large">
+            <button class="modal-close" onclick="closeModal('adminEditTextModal')">&times;</button>
+            <h2>📝 Тексттерди өзгөртүү</h2>
+            <form id="adminEditTextForm" onsubmit="event.preventDefault(); adminSaveTexts();">
+                <div class="form-group">
+                    <label>Башкы бет аталышы</label>
+                    <input type="text" id="editHeroTitle">
+                </div>
+                <div class="form-group">
+                    <label>Башкы бет сүрөттөмөсү</label>
+                    <textarea id="editHeroDesc" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Курстар бөлүмү аталышы</label>
+                    <input type="text" id="editCoursesTitle">
+                </div>
+                <div class="form-group">
+                    <label>Курстар бөлүмү сүрөттөмөсү</label>
+                    <textarea id="editCoursesDesc" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Пикирлер бөлүмү аталышы</label>
+                    <input type="text" id="editReviewsTitle">
+                </div>
+                <div class="form-group">
+                    <label>Footer тексти</label>
+                    <input type="text" id="editFooterText">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">💾 Тексттерди сактоо</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin: Change Password Modal -->
+    <div id="adminChangePassModal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('adminChangePassModal')">&times;</button>
+            <h2>🔐 Сырсөздү өзгөртүү</h2>
+            <form id="adminChangePassForm" onsubmit="event.preventDefault(); adminSaveChangePass();">
+                <input type="hidden" id="changePassUserId">
+                <div id="changePassUserName" style="text-align:center;margin-bottom:20px;font-weight:600;color:var(--primary);"></div>
+                <div class="form-group">
+                    <label>Жаңы сырсөз *</label>
+                    <input type="password" id="newPassInput" required placeholder="Жаңы сырсөз (мин. 6 символ)">
+                    <div class="password-strength" id="adminPassStrength"></div>
+                </div>
+                <div class="form-group">
+                    <label>Сырсөздү ырастоо *</label>
+                    <input type="password" id="confirmPassInput" required placeholder="Сырсөздү кайталаңыз">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Сырсөздү өзгөртүү</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMobileMenu()"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
